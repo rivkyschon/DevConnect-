@@ -1,59 +1,15 @@
 pipeline {
     agent any
-
-    triggers {
-        pollSCM('*/10 * * * *')
-    }
-
     stages {
-        stage('Build and Test') {
+        stage('Checkout') {
             steps {
-                // Checkout your source code
-                checkout scm
-
-                // Build the Docker image
-                script {
-                    dockerImage = docker.build("your-image-name:${env.BUILD_ID}")
-                }
-
-                // Run Django tests
-                sh 'python manage.py test'
-
-                // Additional tests (e.g., HTTP requests)
-                sh 'curl -I http://your-app-url'
-
-                // Archive test results
-                archiveArtifacts '**/test-reports/*.xml'
+                checkout([$class: 'GitSCM',
+                    branches: [[name: '']], // Define the branch you want to build
+                    userRemoteConfigs: [[url: 'https://github.com/rivkyschon/DevConnect-.git']],
+                    extensions: [[$class: 'WildcardSCMHeadFilter']]
+                ])
             }
         }
-
-        stage('Push Image') {
-            when {
-                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-            }
-            steps {
-                // Push the Docker image to your container registry
-                script {
-                    dockerImage.push()
-                }
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            when {
-                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-            }
-            steps {
-                // Deploy the updated app to your production Kubernetes cluster
-                // You'll need kubectl configured with credentials for the cluster
-                sh 'kubectl apply -f your-k8s-deployment.yaml'
-            }
-        }
-    }
-
-    post {
-        failure {
-            echo 'The pipeline failed :('
-        }
+        // Add more stages as needed
     }
 }
