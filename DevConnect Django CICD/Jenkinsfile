@@ -1,1 +1,66 @@
 
+pipeline {
+    agent any
+   
+
+    triggers {
+        pollSCM('*/1 * * * *')
+    }
+
+    stages {
+        stage('Delete Workspace Before Build Starts') {
+            steps {
+                script {
+                    deleteDir()
+                }
+            }
+        }
+
+        stage('SCM Checkout') {
+            steps {
+                // Define SCM using Git with SSH URL
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/main']], // Specify your branch
+                          userRemoteConfigs: [[url: 'git@github.com:leahmontag/DevSecOps-Final-Project-DevConnect.git',
+                              credentialsId: 'c4697c56-a44f-4ffc-a812-c68c401d6a32']]])
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    echo 'Building the application...'
+                    // Add your build commands here
+                    docker build -t img_devConnect .
+                    sh 'docker run -d -p 8000:8000 --name container_devConnect img_devConnect'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    echo 'Running Django tests...'
+                    sh 'python django_web_app/manage.py test'
+                    def responseCode = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://your-app-url', returnStatus: true).trim()
+
+                    if (responseCode == '200') {
+                        echo 'Application is accessible with a 200(OK) response.'
+                    } else {
+                        error 'Failed to get a 200(OK) response. Pipeline will be marked as failed.'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up resources and workspace...'
+            deleteDir()
+        }
+        failure {
+            echo 'The pipeline failed :('
+        }
+    }
+}
