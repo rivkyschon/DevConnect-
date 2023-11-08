@@ -1,64 +1,57 @@
-
 pipeline {
     agent any
-   
 
     triggers {
-        pollSCM('*/1 * * * *')
+        pollSCM('*/10 * * * *')
     }
 
     stages {
-        stage('Delete Workspace Before Build Starts') {
+        stage('Build and Test') {
             steps {
+                // Checkout your source code
+                checkout scm
+
+                // Build the Docker image
                 script {
-                    deleteDir()
+                    dockerImage = docker.build("your-image-name:${env.BUILD_ID}")
+                }
+
+                // Run Django tests
+                sh 'python manage.py test'
+
+                // Additional tests (e.g., HTTP requests)
+                sh 'curl -I http://your-app-url'
+
+                // Archive test results
+                archiveArtifacts '**/test-reports/*.xml'
+            }
+        }
+
+        stage('Push Image') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
+            steps {
+                // Push the Docker image to your container registry
+                script {
+                    dockerImage.push()
                 }
             }
         }
 
-        stage('SCM Checkout') {
-            steps {
-                // Define SCM using Git with SSH URL
-                checkout([$class: 'GitSCM',
-                          branches: [[name: '*/main']], // Specify your branch
-                          userRemoteConfigs: [[url: 'git@github.com:leahmontag/DevSecOps-Final-Project-DevConnect.git',
-                              credentialsId: 'c4697c56-a44f-4ffc-a812-c68c401d6a32']]])
+        stage('Deploy to Kubernetes') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
-        }
-
-        stage('Build') {
             steps {
-                script {
-                    echo 'Building the application...'
-                    // Add your build commands here
-                    docker build -t img_devConnect .
-                    sh 'docker run -d -p 8000:8000 --name container_devConnect img_devConnect'
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                script {
-                    echo 'Running Django tests...'
-                    sh 'python django_web_app/manage.py test'
-                    def responseCode = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://your-app-url', returnStatus: true).trim()
-
-                    if (responseCode == '200') {
-                        echo 'Application is accessible with a 200(OK) response.'
-                    } else {
-                        error 'Failed to get a 200(OK) response. Pipeline will be marked as failed.'
-                    }
-                }
+                // Deploy the updated app to your production Kubernetes cluster
+                // You'll need kubectl configured with credentials for the cluster
+                sh 'kubectl apply -f your-k8s-deployment.yaml'
             }
         }
     }
 
     post {
-        always {
-            echo 'Cleaning up resources and workspace...'
-            deleteDir()
-        }
         failure {
             echo 'The pipeline failed :('
         }
