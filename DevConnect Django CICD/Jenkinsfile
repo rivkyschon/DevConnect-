@@ -20,7 +20,7 @@ pipeline {
                 // Define SCM using Git with SSH URL
                 checkout([$class: 'GitSCM',
                           branches: [[name: '*/main']], // Specify your branch
-                          userRemoteConfigs: [[url: 'git@github.com:leahmontag/DevSecOps-Final-Project-DevConnect.git',
+                          userRemoteConfigs: [[url: 'git@github.com:rivkyschon/DevConnect-.git',
                               credentialsId: 'c4697c56-a44f-4ffc-a812-c68c401d6a32']]])
             }
         }
