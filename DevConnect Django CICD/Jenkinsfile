@@ -1,3 +1,73 @@
 pipeline {
-  sfdd
+    agent any
+
+    triggers {
+        pollSCM('*/10 * * * *')
+    }
+
+    environment {
+        IMAGE_NAME = 'django'
+        ARTIFACT_URL = 'me-west1-docker.pkg.dev/devconnect-final-project/rivky-rizel-artifacts/dev_connect'
+        COMMIT = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    sh 'docker build -t ${IMAGE_NAME}:${COMMIT} .'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    sh 'python django_web_app/manage.py test'
+                }
+            }
+        }
+
+        stage('Push to Artifact Registry') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
+            steps {
+                script {
+                    // Push the image to the Artifact Registry with the commit message as the version
+                    sh 'gcloud auth configure-docker me-west1-docker.pkg.dev'
+                    sh 'docker tag ${IMAGE_NAME}:${COMMIT} ${ARTIFACT_URL}:${COMMIT}'
+                    sh 'docker push ${ARTIFACT_URL}:${COMMIT}'
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
+            steps {
+                script {
+                    // Your deployment steps here (e.g., using your deploy.sh script)
+                    sh './deploy.sh'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'the pipeline failed :('
+        }
+    }
+
+    post {
+        always {
+            // Clean up resources and workspace
+            cleanWs()
+        }
+    }
 }
