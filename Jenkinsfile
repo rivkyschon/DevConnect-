@@ -50,20 +50,6 @@ pipeline {
                     // Run Django tests within the Docker container
                     sh "docker exec ${containerName} python django_web_app/manage.py test"
         
-                    // // Define the URL of your app
-                    // def externalIP = sh(script: 'curl -s http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip -H "Metadata-Flavor: Google"', returnStdout: true).trim()
-                    // def appURL = "http://${externalIP}:8000"
-
-                    //def appUrl = 'http://172.17.0.2:8000'  // Replace with your app's URL
-
-                    // // Check for a 200(OK) response
-                    // def responseCode = sh(script: "curl -s -o /dev/null -w '%{http_code}' $appURL", returnStatus: true).trim()
-                    // echo "${responseCode}"
-                    // if (responseCode == '200') {
-                    //     echo "Application is accessible with a 200(OK) response."
-                    // } else {
-                    //     error "Failed to get a 200(OK) response. Pipeline will be marked as failed."
-                    // }
                 }
                 
             }
