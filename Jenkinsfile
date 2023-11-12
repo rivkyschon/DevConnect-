@@ -13,9 +13,10 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                cleanWs()
                 checkout([$class: 'GitSCM',
                     branches: [[name: 'main']],  // Replace with your branch
-                    userRemoteConfigs: [[url: 'git@github.com:rivkyschon/DevConnect-.git',
+                    userRemoteConfigs: [[url: 'git@github.com:rivkyschon/DevConnect-.git/',
                         credentialsId: 'jenkins']]])
                         
             }
@@ -50,14 +51,14 @@ pipeline {
                     sh "docker exec ${containerName} python django_web_app/manage.py test"
         
                     // // Define the URL of your app
-                    def externalIP = sh(script: 'curl -s http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip -H "Metadata-Flavor: Google"', returnStdout: true).trim()
-                    def appURL = "http://${externalIP}:8000"
+                    // def externalIP = sh(script: 'curl -s http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip -H "Metadata-Flavor: Google"', returnStdout: true).trim()
+                    // def appURL = "http://${externalIP}:8000"
 
                     //def appUrl = 'http://172.17.0.2:8000'  // Replace with your app's URL
 
                     // // Check for a 200(OK) response
-                    def responseCode = sh(script: "curl -s -o /dev/null -w '%{http_code}' $appURL", returnStatus: true).trim()
-                    echo "${responseCode}"
+                    // def responseCode = sh(script: "curl -s -o /dev/null -w '%{http_code}' $appURL", returnStatus: true).trim()
+                    // echo "${responseCode}"
                     // if (responseCode == '200') {
                     //     echo "Application is accessible with a 200(OK) response."
                     // } else {
@@ -74,10 +75,10 @@ pipeline {
                             echo "Build and Push Docker Image..."
                             def gitCommitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
                             def containerName = "django_app-${gitCommitMessage}"
-                            def imageTag = "me-west1-docker.pkg.dev/devconnect-final-project/rivkyschon-artifacts/django_app:${gitCommitMessage}"
+                            def imageTag = "us-central1-docker.pkg.dev/devconnect-project/rivkyschon-artfacts/django_app:${gitCommitMessage}"
                             sh "docker tag django_app:${gitCommitMessage} ${imageTag}"
                             // Authenticate with Google Cloud (if not already authenticated)
-                            sh "gcloud auth configure-docker me-west1-docker.pkg.dev"
+                            sh "gcloud auth configure-docker us-central1-docker.pkg.dev"
 
                             // Push the Docker image to Artifact Registry
                             sh "docker push ${imageTag}"
