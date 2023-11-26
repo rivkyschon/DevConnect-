@@ -38,6 +38,6 @@ DevConnect is a project that unites the global DevOps community, employing Docke
 
 DevConnect successfully integrates Docker, GKE, Jenkins, and GCP for efficient containerization, deployment, and CI/CD. This project enhances skills in these technologies, ensuring readiness for future endeavors.
 
-## Architecture Diagram
+## Troubleshooting
    
 ![final2](https://github.com/rivkyschon/DevConnect-/assets/113901370/55c7a3a6-adbc-4f6c-8fd2-3c7cdad06ccc)
