@@ -29,4 +29,3 @@ The DevConnect project aims to unite the global DevOps community by creating a p
       
 * <h3>Architecture Diagram</h3>
 
-![צילום מסך 2023-11-12 203219](https://github.com/rivkyrizel/DevConnect/assets/100497249/da4b924b-8808-4591-8326-73dfaaeda222)
