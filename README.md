@@ -4,8 +4,6 @@
 
 **Platform:** Google Cloud Platform (GCP)
 
-**GitHub Repository:** [RivkySchon/DevConnect](https://github.com/RivkySchon/DevConnect)
-
 ## Overview
 
 DevConnect is a project that unites the global DevOps community, employing Docker, Google Kubernetes Engine (GKE), Jenkins, and Google Cloud Platform (GCP). This README provides a brief summary of key stages and features.
