@@ -7,10 +7,13 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+IMAGE_NAME="rivkyschon/django_app"
+CONTAINER_NAME="django_app"
+
 # Delete the Docker container using the provided version
-docker rm -f django_app-$VERSION
+docker rm -f $CONTAINER_NAME-$VERSION
 
 # Delete the Docker image using the provided version
-docker rmi django_app:$VERSION
+docker rmi $IMAGE_NAME:$VERSION
 
 
