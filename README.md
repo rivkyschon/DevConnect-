@@ -1,31 +1,42 @@
-<h1>DevConnect Web App!</h1>
+# DevConnect - Final Project
 
-* <h3>Introduction</h3>
-The DevConnect project aims to unite the global DevOps community by creating a platform that fosters communication, collaboration, and knowledge sharing among DevOps professionals. This project focuses on implementing the best DevSecOps practices and leveraging Google Cloud Platform (GCP) technologies.
+**Author:** Rivky Schon
+**Platform:** Google Cloud Platform (GCP)
+**GitHub Repository:** [RivkySchon/DevConnect](https://github.com/RivkySchon/DevConnect)
 
-* <h3>Dockerization</h3>
+## Overview
 
-    * I've crafted a Dockerfile that encapsulates all the necessary requirements for the application to seamlessly run across various environments.
+DevConnect is a project that unites the global DevOps community, employing Docker, Google Kubernetes Engine (GKE), Jenkins, and Google Cloud Platform (GCP). This README provides a brief summary of key stages and features.
 
-    * To streamline the deployment and removal processes, I've developed two crucial shell scripts: init.sh and delete.sh. These scripts are designed to efficiently handle the initialization and deletion of the application environment.
+## Key Stages
 
-    * Ensuring data persistence is a priority for the application's reliability. I personally established a persistent volume to securely store essential data, contributing to a robust and consistent user experience.
+### Stage 1 - Dockerization
 
-* <h3>Deployment</h3>
+- DevConnect web app Dockerized using a lean Dockerfile.
+- Automation scripts (`init.sh` and `delete.sh`) for container building and management.
+- Persistent storage using Docker volumes.
 
-    * I established an artifact repository to store Docker images.
+### Stage 2 - Deployment
 
-    * I set up a  GKE cluster.
+- Artifact repository (`rivkyschon-artifacts`) for image version control.
+- GKE cluster deployment with efficient workload management.
+- Application deployment within the "production" namespace.
 
-    * I exposed the application through a LoadBalancer service, providing user access via a web browser.
-      
-* <h3>CI/CD Pipeline with Jenkins</h3>
+### Stage 3 - CI/CD Pipeline
 
-    * I created a Compute Engine virtual machine for Jenkins automation.
+- Jenkins server hosted on a Compute Engine instance.
+- Custom Jenkins image with Docker, Docker Compose, and Google Cloud SDK.
+- CI/CD pipeline with stages for SCM checkout, build & launch, testing, pushing to the repository, and cleanup.
 
-    * I built the Jenkins image, uploaded it to the artifact registry, and executed it within the Compute Engine instance.
+## Troubleshooting
 
-    * I implemented a CI/CD pipeline for automated builds and deployments.
+- Resolved issues such as "Page Not Found," "TemplateSyntaxError," "TemplateDoesNotExist," and "DEFAULT_AUTO_FIELD" warnings.
+
+## Conclusion
+
+DevConnect successfully integrates Docker, GKE, Jenkins, and GCP for efficient containerization, deployment, and CI/CD. This project enhances skills in these technologies, ensuring readiness for future endeavors.
+
       
 * <h3>Architecture Diagram</h3>
 
+![final2](https://github.com/rivkyschon/DevConnect-/assets/113901370/55c7a3a6-adbc-4f6c-8fd2-3c7cdad06ccc)
