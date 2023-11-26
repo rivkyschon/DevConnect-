@@ -1,7 +1,9 @@
 # DevConnect - Final Project
 
 **Author:** Rivky Schon
+
 **Platform:** Google Cloud Platform (GCP)
+
 **GitHub Repository:** [RivkySchon/DevConnect](https://github.com/RivkySchon/DevConnect)
 
 ## Overview
@@ -36,7 +38,6 @@ DevConnect is a project that unites the global DevOps community, employing Docke
 
 DevConnect successfully integrates Docker, GKE, Jenkins, and GCP for efficient containerization, deployment, and CI/CD. This project enhances skills in these technologies, ensuring readiness for future endeavors.
 
-      
-* <h3>Architecture Diagram</h3>
-
+## Architecture Diagram
+   
 ![final2](https://github.com/rivkyschon/DevConnect-/assets/113901370/55c7a3a6-adbc-4f6c-8fd2-3c7cdad06ccc)
